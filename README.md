@@ -26,7 +26,7 @@ This repo will (hopefully) contain all HW code written for ENAE788V. This README
 The goal of this HW was to implement the A* algorithm for an arbitrary graph. Using this code, files containing nodes and edges of the following format can
 be read in. A start node id and goal node id can be passed. The search path and search tree will be outputted.
 
-node_<#>.txt
+nodes_<#>.txt
 
 ```
 {NUM NODES}
@@ -47,15 +47,15 @@ edges_with_costs_<#>.txt
 
 Note the # in the file names. Below are the steps to run.
 
-1. Copy the Makefile from ./makefiles/hw1 to the root dir.
+1. Copy the Makefile from `./makefiles/hw1` to the root dir.
 2. Run the `make` command to compile the code. A srch.exe file should be created in the root dir.
    1. Run `make clean` to remove unneeded files
-3. Place node/edge files named properly in ./data/hw1
+3. Place node/edge files named properly in `./data/hw1`
    1. The given files are already there
 4. From the root dir, run `./srch {#} {start_node_id} {end_node_id}`
-   1. Output files will be created in ./output/hw1
-      1. output_path_#.txt will contain the path
-      2. search_tree_#.txt will contain the tree
+   1. Output files will be created in `./output/hw1`
+      1. `output_path_#.txt` will contain the path
+      2. `search_tree_#.txt` will contain the tree
    
 The paths and search tree can be visualized via a plot.
 1. Navigate to ./src/hw1
