@@ -56,8 +56,8 @@ def parse_tree(file_path):
 
 def main():
     problem = sys.argv[1]
-    start = sys.argv[2]
-    end = sys.argv[3]
+    start = int(sys.argv[2])
+    end = int(sys.argv[3])
     
     node_file_path = os.path.join(DATA_FOLDER_PATH, f"nodes_{problem}.txt")
     edges_file_path = os.path.join(DATA_FOLDER_PATH, f"edges_with_costs_{problem}.txt")
