@@ -62,6 +62,10 @@ The paths and search tree can be visualized via a plot.
 2. Open the plot_graphs.py script and adjust the absolute paths at the top of the script
 3. Create a plot by running `py ./plot_graphs.py {#} {start_node_id} {end_node_id}`
 
+The HW consists of 5 given problems, if on windows, they can all be run by executing the batch file in `./runs`.
+1. Change working dir into runs
+2. Run `./hw1.bat`
+
 ### Some Notes
 
 The standard C++ library `std::priority_queue` was utilized to implement A*. The Node class is given a 
