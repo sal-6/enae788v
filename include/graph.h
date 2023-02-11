@@ -36,8 +36,9 @@ struct Edge
  
 
 // this is a basic graph node for a 2D graph
-struct Node
+class Node
 {
+public:
   int id;     // this is the id of the node
               // it is alos the position in the node array in the
               // graph data structure where this node is stored
@@ -71,10 +72,17 @@ struct Node
 
   bool inHeap;           // init to false and set to true iff the node is in the heap
   int heapIndex;         // enables quick access to the node in the heap
+  
+  // ***********************************************************************************
+  
+  // the following fields are used for the A* search
+  double cost_from_start;              // the cost of the path from the start node to this node
+  double priority;              // the heuristic cost of the path from this node to the goal node
+  
+   
+  int get_id() { return id + 1; }
 
 };
-
-
 
 
 // this is the graph data structure
