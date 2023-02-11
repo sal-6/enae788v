@@ -1,9 +1,8 @@
 from matplotlib import pyplot as plt
 import os
-import json
 
-DATA_FOLDER_PATH = "G:\\My Drive\\UMD\\Spring 2023\\ENAE788V\\Code\\788v\\data\\Hw1"
-OUTPUT_FOLDER_PATH = "G:\\My Drive\\UMD\\Spring 2023\\ENAE788V\\Code\\788v\\src\\788v\\Hw1\\Output"
+DATA_FOLDER_PATH = "G:\\My Drive\\UMD\\Spring 2023\\ENAE788V\\Code\\enae788v\\data\\hw1"
+OUTPUT_FOLDER_PATH = "G:\\My Drive\\UMD\\Spring 2023\\ENAE788V\\Code\\enae788v\\output\\hw1"
 
 def parse_nodes(file_path):
     nodes = {}
@@ -32,31 +31,35 @@ def parse_edges(file_path):
             
     return edges
     
-def plot_search_path(nodes, edges, path):
-    for i in range(len(path)-1):
-        node_1 = nodes[int(path[i])]
-        node_2 = nodes[int(path[i+1])]
-        x = [node_1[0], node_2[0]]
-        y = [node_1[1], node_2[1]]
-        plt.plot(x, y, color='green', linewidth=5)
-        
 
-def plot_search_tree(nodes, edges, tree):
-    for exp in tree:
-        node_1 = nodes[int(exp[0])]
-        node_2 = nodes[int(exp[1])]
-        x = [node_1[0], node_2[0]]
-        y = [node_1[1], node_2[1]]
-        plt.plot(x, y, color='pink', linewidth=3)
+def parse_path(file_path):
+    
+    search_path = []
+    with open(file_path, 'r') as f:
+        for line in f:
+            search_path.append(int(line.split(",")[0]))
+            
+    return search_path
+
+def parse_tree(file_path):
+    
+    search_tree = []
+    with open(file_path, 'r') as f:
+        for line in f:
+            data = line.split(",")
+            search_tree.append((int(data[0]), int(data[3])))
+            
+    return search_tree
+    
         
 
 def main():
-    problem = 5
+    problem = 1
     
     node_file_path = os.path.join(DATA_FOLDER_PATH, f"nodes_{problem}.txt")
     edges_file_path = os.path.join(DATA_FOLDER_PATH, f"edges_with_costs_{problem}.txt")
-    path_file_path = os.path.join(OUTPUT_FOLDER_PATH, f"path_{problem}.json")
-    tree_file_path = os.path.join(OUTPUT_FOLDER_PATH, f"tree_{problem}.json")
+    path_file_path = os.path.join(OUTPUT_FOLDER_PATH, f"output_path_{problem}.txt")
+    tree_file_path = os.path.join(OUTPUT_FOLDER_PATH, f"search_tree_{problem}.txt")
     
     
     nodes = parse_nodes(node_file_path)
@@ -77,20 +80,24 @@ def main():
         plt.scatter(x, y, color='blue')
         # add a label to the node with its id
         #plt.annotate(node, (x+1, y+1))
-
-    # plot the search tree
-    with open(tree_file_path, 'r') as f:
-        data = json.load(f)
-
-    plot_search_tree(nodes, edges, data["tree"])
-            
-    # parse json from the output file
-    with open(path_file_path, 'r') as f:
-        data = json.load(f) 
+        
+    search_path = parse_path(path_file_path)
+    search_tree = parse_tree(tree_file_path)
     
-    plot_search_path(nodes, edges, data["path"])
-    
-    
+    for i in range(len(search_path)-1):
+        node_1 = nodes[search_path[i]]
+        node_2 = nodes[search_path[i+1]]
+        x = [node_1[0], node_2[0]]
+        y = [node_1[1], node_2[1]]
+        plt.plot(x, y, color='red')
+        
+    for edge in search_tree:
+        node_1 = nodes[edge[0]]
+        node_2 = nodes[edge[1]]
+        x = [node_1[0], node_2[0]]
+        y = [node_1[1], node_2[1]]
+        plt.plot(x, y, color='green')
+        
     plt.show()
 
 if __name__ == '__main__':
