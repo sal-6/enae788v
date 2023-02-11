@@ -1,5 +1,6 @@
 from matplotlib import pyplot as plt
 import os
+import sys
 
 DATA_FOLDER_PATH = "G:\\My Drive\\UMD\\Spring 2023\\ENAE788V\\Code\\enae788v\\data\\hw1"
 OUTPUT_FOLDER_PATH = "G:\\My Drive\\UMD\\Spring 2023\\ENAE788V\\Code\\enae788v\\output\\hw1"
@@ -54,7 +55,7 @@ def parse_tree(file_path):
         
 
 def main():
-    problem = 1
+    problem = sys.argv[1]
     
     node_file_path = os.path.join(DATA_FOLDER_PATH, f"nodes_{problem}.txt")
     edges_file_path = os.path.join(DATA_FOLDER_PATH, f"edges_with_costs_{problem}.txt")

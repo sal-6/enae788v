@@ -16,6 +16,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include <time.h>
 #include <sys/time.h>
 #include <math.h>
+#include <string>
 
 
 #include "heap.h"
@@ -73,20 +74,23 @@ void expand(Heap<Node> &H, Node* thisNode)
 }
 
 
-
-int main()
+// main function
+// call with three args: ./app.exe <file_id> <start_node_id> <goal_node_id>
+int main(int argc, char** argv)
 {
   srand(time(NULL)); // seed random number generator
-
+  
+  std::string node_file = "./data/hw1/nodes_" + std::string(argv[1]) + ".txt";
+  std::string edge_file = "./data/hw1/edges_with_costs_" + std::string(argv[1]) + ".txt";
+  
   Graph G;
-  G.readGraphFromFiles("./data/hw1/nodes_1.txt", "./data/hw1/edges_with_costs_1.txt");
+  G.readGraphFromFiles(node_file.c_str(), edge_file.c_str());
   //G.printGraph();
 
   // we want to find a path that goes from here to here
   // these are indicies and NOT the actual ids
-  // TODO: change that. its dumb
-  int startNodeIndex = 9;
-  int goalNodeIndex = 5;
+  int startNodeIndex = atoi(argv[2]) - 1;
+  int goalNodeIndex = atoi(argv[3]) - 1;
 
 
   Heap<Node> H(100); // this is the heap (start's with space for 100 items
@@ -122,9 +126,12 @@ int main()
   // and also the best path that we found (NOTE, these add 1 to indicies
   // to make them compativle with the graph file that was used as input for
   // the search)
+  
+  string path_output_path = "./output/hw1/output_path_" + std::string(argv[1]) + ".txt";
+  string search_tree_path = "./output/hw1/search_tree_" + std::string(argv[1]) + ".txt";
 
-  G.savePathToFile("./output/hw1/output_path_1.txt", goalNode);
-  G.saveSearchTreeToFile("./output/hw1/search_tree_1.txt");
+  G.savePathToFile(path_output_path.c_str(), goalNode);
+  G.saveSearchTreeToFile(search_tree_path.c_str());
 
 
   return 0;
