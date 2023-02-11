@@ -84,13 +84,6 @@ def main():
         
     search_path = parse_path(path_file_path)
     search_tree = parse_tree(tree_file_path)
-    
-    for i in range(len(search_path)-1):
-        node_1 = nodes[search_path[i]]
-        node_2 = nodes[search_path[i+1]]
-        x = [node_1[0], node_2[0]]
-        y = [node_1[1], node_2[1]]
-        plt.plot(x, y, color='red')
         
     for edge in search_tree:
         node_1 = nodes[edge[0]]
@@ -98,6 +91,13 @@ def main():
         x = [node_1[0], node_2[0]]
         y = [node_1[1], node_2[1]]
         plt.plot(x, y, color='green')
+        
+    for i in range(len(search_path)-1):
+        node_1 = nodes[search_path[i]]
+        node_2 = nodes[search_path[i+1]]
+        x = [node_1[0], node_2[0]]
+        y = [node_1[1], node_2[1]]
+        plt.plot(x, y, color='red')
         
     plt.show()
 
