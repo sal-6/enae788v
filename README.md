@@ -27,17 +27,21 @@ The goal of this HW was to implement the A* algorithm for an arbitrary graph. Us
 be read in. A start node id and goal node id can be passed. The search path and search tree will be outputted.
 
 node_<#>.txt
-    {NUM NODES}
-    {node_id}, {x}, {y}
-    {node_id}, {x}, {y}
-    {node_id}, {x}, {y}
+`
+{NUM NODES}
+{node_id}, {x}, {y}
+{node_id}, {x}, {y}
+{node_id}, {x}, {y}
+`
 
 edges_with_costs_<#>.txt
-    {NUM EDGES}
-    {start_node_id}, {end_node_id}, {length}
-    {start_node_id}, {end_node_id}, {length}
-    {start_node_id}, {end_node_id}, {length}
-    {start_node_id}, {end_node_id}, {length}
+`
+{NUM EDGES}
+{start_node_id}, {end_node_id}, {length}
+{start_node_id}, {end_node_id}, {length}
+{start_node_id}, {end_node_id}, {length}
+{start_node_id}, {end_node_id}, {length}
+`
 
 Note the # in the file names. Below are the steps to run.
 
