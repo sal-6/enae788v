@@ -56,6 +56,8 @@ def parse_tree(file_path):
 
 def main():
     problem = sys.argv[1]
+    start = int(sys.argv[2])
+    end = int(sys.argv[3])
     
     node_file_path = os.path.join(DATA_FOLDER_PATH, f"nodes_{problem}.txt")
     edges_file_path = os.path.join(DATA_FOLDER_PATH, f"edges_with_costs_{problem}.txt")
@@ -67,6 +69,14 @@ def main():
     edges = parse_edges(edges_file_path)
     
     fig = plt.figure()
+    
+    # label start and end nodes
+    start_node = nodes[start]
+    end_node = nodes[end]
+    plt.scatter(start_node[0], start_node[1], color='red')
+    plt.annotate("Start", (start_node[0]+1, start_node[1]+1))
+    plt.scatter(end_node[0], end_node[1], color='red')
+    plt.annotate("End", (end_node[0]+1, end_node[1]+1))
     
     for edge in edges:
         node_1 = nodes[edge[0]]
