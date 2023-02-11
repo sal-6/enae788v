@@ -3,7 +3,7 @@
 This repo will (hopefully) contain all HW code written for ENAE788V. This README will outline the process for running and using the relavant code.
 
 # Prerequisites
-- Python3
+- python3
 - g++
 - make
   
@@ -28,22 +28,22 @@ be read in. A start node id and goal node id can be passed. The search path and 
 
 node_<#>.txt
 
-`
-{NUM NODES}\n
+```
+{NUM NODES}
 {node_id}, {x}, {y}
 {node_id}, {x}, {y}
 {node_id}, {x}, {y}
-`
+```
 
 edges_with_costs_<#>.txt
 
-`
+```
 {NUM EDGES}
 {start_node_id}, {end_node_id}, {length}
 {start_node_id}, {end_node_id}, {length}
 {start_node_id}, {end_node_id}, {length}
 {start_node_id}, {end_node_id}, {length}
-`
+```
 
 Note the # in the file names. Below are the steps to run.
 
@@ -64,6 +64,5 @@ The paths and search tree can be visualized via a plot.
 
 ### Some Notes
 
-The standard C++ library std::priority_queue was utilized to implement A*. The Node class is given a 
-priority attribute. The std:priority_queue used is given a Comparator that sort returns the Node with
-the smaller priority value.
+The standard C++ library `std::priority_queue` was utilized to implement A*. The Node class is given a 
+priority attribute. The `std:priority_queue` used is given a Comparator that sort returns the Node with the smaller priority value.
