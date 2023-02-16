@@ -68,8 +68,10 @@ The HW consists of 5 given problems, if on windows, they can all be run by execu
 
 ### Implementation Notes
 
+The implementation of A* can be found in `./src/hw1/simple_graph_search.cpp`. It utilizes a slightly modified form of the 'graph.h' provided by Michael Otte, specifically, modifying the original Node struct. This was changed to a class with a method to obtain each nodes ID (as opposed to index). Additionally we track each nodes cost from the start node at a given point in time. We also track each nodes priority which accounts for a Euclidean distance heuristic for that node to reach the end node. Nodes are searched in order of that with the lowest priority value.
+
 The standard C++ library `std::priority_queue` was utilized to implement A*. Its documentation can be found here (https://en.cppreference.com/w/cpp/container/priority_queue). The Node class is given a 
-priority attribute. The `std:priority_queue` used is given a Compare parameter that changes the default behaviour and returns the Node with the smaller priority attribute.
+priority attribute. The `std:priority_queue` used is given a Compare parameter that changes the default behaviour and returns the Node with the smaller priority attribute, that is, it behaves as a min priority queue.
 
 
-The outputed paths, search trees, and plots can be found in ./output/hw1. In each plot, the Blue dots represent the Nodes, the Black lines represent each edge (since the given graphs are not directional no arrows are shown as they would be bi-directional), the Red path outlines the found optimal path, and the Green shows the search tree.
+The outputted paths, search trees, and plots can be found in './output/hw1'. In each plot, the Blue dots represent the Nodes, the Black lines represent each edge (since the given graphs are not directional no arrows are shown as they would be bi-directional), the Red path outlines the found optimal path, and the Green shows the search tree. The plot naming format is 'graph_<#>_s<start_node_id>_e<end_node_id>'.
