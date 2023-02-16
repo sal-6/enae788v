@@ -109,6 +109,7 @@ def main():
     plt.scatter(end_node[0], end_node[1], color='red')
     plt.annotate("End", (end_node[0]+1, end_node[1]+1))
         
+    plt.savefig(os.path.join(OUTPUT_FOLDER_PATH, f"graph_{problem}_s{start}_e{end}.png"))
     plt.show()
 
 if __name__ == '__main__':
