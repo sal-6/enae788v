@@ -61,8 +61,8 @@ def main():
     
     node_file_path = os.path.join(DATA_FOLDER_PATH, f"nodes_{problem}.txt")
     edges_file_path = os.path.join(DATA_FOLDER_PATH, f"edges_with_costs_{problem}.txt")
-    path_file_path = os.path.join(OUTPUT_FOLDER_PATH, f"output_path_{problem}.txt")
-    tree_file_path = os.path.join(OUTPUT_FOLDER_PATH, f"search_tree_{problem}.txt")
+    path_file_path = os.path.join(OUTPUT_FOLDER_PATH, f"output_path_{problem}_test2.txt")
+    tree_file_path = os.path.join(OUTPUT_FOLDER_PATH, f"search_tree_{problem}_test2.txt")
     
     
     nodes = parse_nodes(node_file_path)

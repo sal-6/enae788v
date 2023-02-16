@@ -55,7 +55,6 @@ void A_star(priority_queue<Node*, vector<Node*>, node_compare> &Q, Node* goalNod
     Node* thisNode = Q.top();
     Q.pop();
     
-    
     for(int n = 0; n < thisNode->numOutgoingEdges; n++)
     {
       Edge* thisEdge = thisNode->outgoingEdges[n];  // pointer to this edge
@@ -70,12 +69,22 @@ void A_star(priority_queue<Node*, vector<Node*>, node_compare> &Q, Node* goalNod
         neighborNode->status = 1;
       }
       
-      else if (neighborNode->status == 1 || neighborNode->status == 2) {
+      else if (neighborNode->status == 1) {
         double new_cost = thisNode->cost_from_start + thisEdge->edgeCost;
         if (new_cost < neighborNode->cost_from_start) {
           neighborNode->parentNode = thisNode;
           neighborNode->cost_from_start = new_cost;
           neighborNode->priority = neighborNode->cost_from_start + heuristic(neighborNode, goalNode);
+        }
+      }
+      
+      else if (neighborNode->status == 2) {
+        double new_cost = thisNode->cost_from_start + thisEdge->edgeCost;
+        if (new_cost < neighborNode->cost_from_start) {
+          neighborNode->parentNode = thisNode;
+          neighborNode->cost_from_start = new_cost;
+          neighborNode->priority = neighborNode->cost_from_start + heuristic(neighborNode, goalNode);
+          Q.push(neighborNode);
         }
       }
     }
@@ -118,8 +127,8 @@ int main(int argc, char** argv)
   
   A_star(Q, goalNode);  
   
-  std::string path_output_path = "./output/hw1/output_path_" + std::string(argv[1]) + ".txt";
-  std::string search_tree_path = "./output/hw1/search_tree_" + std::string(argv[1]) + ".txt";
+  std::string path_output_path = "./output/hw1/output_path_" + std::string(argv[1]) + "_test2.txt";
+  std::string search_tree_path = "./output/hw1/search_tree_" + std::string(argv[1]) + "_test2.txt";
 
   G.savePathToFile(path_output_path.c_str(), goalNode);
   G.saveSearchTreeToFile(search_tree_path.c_str());
