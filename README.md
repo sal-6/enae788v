@@ -66,7 +66,10 @@ The HW consists of 5 given problems, if on windows, they can all be run by execu
 1. Change working dir into runs
 2. Run `./hw1.bat`
 
-### Some Notes
+### Implementation Notes
 
-The standard C++ library `std::priority_queue` was utilized to implement A*. The Node class is given a 
-priority attribute. The `std:priority_queue` used is given a Comparator that sort returns the Node with the smaller priority value.
+The standard C++ library `std::priority_queue` was utilized to implement A*. Its documentation can be found here (https://en.cppreference.com/w/cpp/container/priority_queue). The Node class is given a 
+priority attribute. The `std:priority_queue` used is given a Compare parameter that changes the default behaviour and returns the Node with the smaller priority attribute.
+
+
+The outputed paths, search trees, and plots can be found in ./output/hw1. In each plot, the Blue dots represent the Nodes, the Black lines represent each edge (since the given graphs are not directional no arrows are shown as they would be bi-directional), the Red path outlines the found optimal path, and the Green shows the search tree.
