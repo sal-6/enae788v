@@ -1,11 +1,14 @@
 CC=g++
 CFLAGS=-I./include
 
-all: simple_graph_search.o
-	$(CC) simple_graph_search.o -o srch
+all: hw2.o utils.o
+	$(CC) hw2.o utils.o -o rrt
 
-simple_graph_search.o: ./src/hw1/simple_graph_search.cpp
-	$(CC) -c $(CFLAGS) ./src/hw1/simple_graph_search.cpp
+hw2.o: ./src/hw2/hw2.cpp
+	$(CC) -c $(CFLAGS) ./src/hw2/hw2.cpp
+
+utils.o: ./src/hw2/utils.cpp
+	$(CC) -c $(CFLAGS) ./src/hw2/utils.cpp
 
 clean:
 	rm -f *.o
