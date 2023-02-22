@@ -47,6 +47,8 @@ edges_with_costs_<#>.txt
 
 Note the # in the file names. Below are the steps to run.
 
+### Instructions
+
 1. Copy the Makefile from `./makefiles/hw1` to the root dir.
 2. Run the `make` command to compile the code. A srch.exe file should be created in the root dir.
    1. Run `make clean` to remove unneeded files
@@ -75,3 +77,24 @@ priority attribute. The `std:priority_queue` used is given a Compare parameter t
 
 
 The outputted paths, search trees, and plots can be found in './output/hw1'. In each plot, the Blue dots represent the Nodes, the Black lines represent each edge (since the given graphs are not directional no arrows are shown as they would be bi-directional), the Red path outlines the found optimal path, and the Green shows the search tree. The plot naming format is 'graph_<#>_s<start_node_id>_e<end_node_id>'.
+
+## Homework 2
+
+The goal of this homework was to implement a basic version of the RRT algorithm. As inputs, the implemented code will require an obstacles file structured as seen below:
+
+obstacles.txt
+
+```
+{NUM OBSTACLES}
+{x}, {y}, {radius}
+{x}, {y}, {radius}
+{x}, {y}, {radius}
+```
+
+### Instructions
+
+TODO
+
+### Implementation Notes
+
+TODO
