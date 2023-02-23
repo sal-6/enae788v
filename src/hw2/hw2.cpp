@@ -4,7 +4,9 @@
 
 int main(int argc, char** argv) {
     
-    // print the return value of check_if_collision()
-    std::cout << check_if_collision() << std::endl;
+    Obstacles O = Obstacles();
+    O.parse_from_obstacle_file("./data/hw2/obstacles.txt");
+    O.log_info();
+    
     return 0;
 }
