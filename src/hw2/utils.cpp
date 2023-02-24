@@ -38,6 +38,25 @@ Node* Tree::closest_node(Node* node) {
 
 void Tree::add_node(Node* node) {
     this->nodes.push_back(node);
+    std::cout << "added node: " << node->x << ", " << node->y << std::endl;
+}
+
+bool Tree::export_tree(std::string filename) {
+    FILE* pFile = fopen(filename.c_str(), "w");
+    if (pFile == NULL) {
+        return false;
+    }
+    
+    for (std::list<Node*>::iterator it = this->nodes.begin(); it != this->nodes.end(); ++it) {
+        if ((*it)->parent != NULL) {
+            fprintf(pFile, "%f, %f, %f, %f\n",
+            (*it)->x, (*it)->y,
+            (*it)->parent->x, (*it)->parent->y);
+        }
+    }
+    
+    fclose(pFile);
+    return true;
 }
 
 // implement Collidable **************************************************

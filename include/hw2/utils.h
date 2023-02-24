@@ -20,6 +20,8 @@ class Tree {
         void log_info();
         Node* closest_node(Node* node);
         void add_node(Node* node);
+        bool export_tree(std::string filename);
+        bool export_path(std::string filename, Node* goal);
 };
 
 
