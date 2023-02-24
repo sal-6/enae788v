@@ -102,4 +102,5 @@ TODO
 
 ## Randoms TODOs I Might Do at Some Point, IDK
 - [ ] Organize header files for HW1 in subfolder
+- [ ] Implement an actual data structure for hw2 closest neighbor
 - [ ] 

@@ -5,13 +5,22 @@ class Node {
     public:
         float x;
         float y;
-        float z;
         
-        Node(float x, float y, float z);
+        Node* parent;
+        
+        Node(float x, float y);
 };
 
 
-class Tree {};
+class Tree {
+    public:
+        std::list<Node*> nodes;
+        
+        Tree();
+        void log_info();
+        Node* closest_node(Node* node);
+        void add_node(Node* node);
+};
 
 
 class Collidable {
