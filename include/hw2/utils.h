@@ -31,6 +31,9 @@ class Collidable {
         
         Collidable(float x, float y, float radius);
         void log_info();
+        bool is_point_in_collision(Node* n);
+        bool is_segment_in_collision(Node* n1, Node* n2, int divisions = 10);
+        
 };
 
 

@@ -54,6 +54,35 @@ void Collidable::log_info() {
     std::cout << "radius: " << this->radius << std::endl;
 }
 
+// edges are considered collisions if they intersect the circle
+bool Collidable::is_point_in_collision(Node* n) {
+    float dist = sqrt(pow(this->x - n->x, 2) + pow(this->y - n->y, 2));
+    return dist <= this->radius;
+}
+
+bool Collidable::is_segment_in_collision(Node* n1, Node* n2, int divisions) {
+    float dist = sqrt(pow(this->x - n1->x, 2) + pow(this->y - n1->y, 2));
+    if (dist <= this->radius) {
+        return true;
+    }
+    dist = sqrt(pow(this->x - n2->x, 2) + pow(this->y - n2->y, 2));
+    if (dist <= this->radius) {
+        return true;
+    }
+    
+    // divide segment into divisions + 1 points and check if any of them are in collision
+    float x_step = (n2->x - n1->x) / divisions;
+    float y_step = (n2->y - n1->y) / divisions;
+    for (int i = 1; i < divisions; i++) {
+        float x = n1->x + i * x_step;
+        float y = n1->y + i * y_step;
+        dist = sqrt(pow(this->x - x, 2) + pow(this->y - y, 2));
+        if (dist <= this->radius) {
+            return true;
+        }
+    }
+    return false;
+}
 
 // implement Obstacles **************************************************
 Obstacles::Obstacles() {
