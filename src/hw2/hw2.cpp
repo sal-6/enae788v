@@ -1,5 +1,10 @@
 #include "hw2/utils.h"
 #include <iostream>
+#include <fstream>
+#include "hw2/json.hpp"
+
+
+using json = nlohmann::json;
 
 void test_obstacles() {
     Obstacles O = Obstacles();
@@ -33,14 +38,35 @@ void test_collision() {
     std::cout << "n3 to n1 in collision: " << C.is_segment_in_collision(n3, n1) << std::endl;
 }
 
+struct ProblemData {
+    float start_x;
+    float start_y;
+    float goal_x;
+    float goal_y;
+    float goal_radius;
+    float epsilon;
+};
 
 int main(int argc, char** argv) {
     
+    
+    std::ifstream inp("./data/hw2/problems.json");
+    json problem_data;
+    inp >> problem_data;
+
+    ProblemData P = ProblemData();
+    P.start_x = problem_data[std::string(argv[1])]["start_x"];
+    P.start_y = problem_data[std::string(argv[1])]["start_y"];
+    P.goal_x = problem_data[std::string(argv[1])]["goal_x"];
+    P.goal_y = problem_data[std::string(argv[1])]["goal_y"];
+    P.goal_radius = problem_data[std::string(argv[1])]["goal_radius"];
+    P.epsilon = problem_data[std::string(argv[1])]["epsilon"];
+    
     srand(time(NULL)); // seed for random number generator
        
-    Node start = Node(0, 0);
-    Collidable goal_region = Collidable(-38, 20, 10);
-    float epsilon = 10;
+    Node start = Node(P.start_x, P.start_y);
+    Collidable goal_region = Collidable(P.goal_x, P.goal_y, P.goal_radius);
+    float epsilon = P.epsilon;
     
     Obstacles O = Obstacles();
     O.parse_from_obstacle_file("./data/hw2/obstacles.txt");
@@ -90,7 +116,7 @@ int main(int argc, char** argv) {
     
     
     T.log_info();
-    T.export_tree("./output/hw2/tree_1.txt");
+    T.export_tree("./output/hw2/tree_" + std::string(argv[1]) + ".txt");
     
     return 0;
 }
