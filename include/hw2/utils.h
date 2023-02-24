@@ -44,4 +44,12 @@ class Obstacles {
         Obstacles();
         void log_info();
         void parse_from_obstacle_file(std::string filename);    
+        bool is_point_in_collision(Node* n);
+        bool is_segment_in_collision(Node* n1, Node* n2, int divisions = 10);
 };
+
+
+// function prototypes
+Node random_node();
+float distance_between_nodes(Node* n1, Node* n2);
+Node get_node_in_direction(Node* n1, Node* n2, float distance);

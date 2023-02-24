@@ -114,3 +114,54 @@ void Obstacles::parse_from_obstacle_file(std::string filename) {
     }
     
 }
+
+bool Obstacles::is_point_in_collision(Node* n) {
+    for (std::list<Collidable*>::iterator it = this->obstacles.begin(); it != this->obstacles.end(); ++it) {
+        if ((*it)->is_point_in_collision(n)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Obstacles::is_segment_in_collision(Node* n1, Node* n2, int divisions) {
+    for (std::list<Collidable*>::iterator it = this->obstacles.begin(); it != this->obstacles.end(); ++it) {
+        if ((*it)->is_segment_in_collision(n1, n2, divisions)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
+// function implementations **************************************************
+Node random_node() {
+    float rand_x = static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / 100.0)) - 50;
+    float rand_y = static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / 100.0)) - 50;
+    return Node(rand_x, rand_y);
+}
+
+float distance_between_nodes(Node* n1, Node* n2) {
+    return sqrt(pow(n1->x - n2->x, 2) + pow(n1->y - n2->y, 2));
+}
+
+Node get_node_in_direction(Node* n1, Node* n2, float distance) {
+    // get x and y components of the vector between n1 and n2
+    float x_component = n2->x - n1->x;
+    float y_component = n2->y - n1->y;
+    
+    // normalize the vector
+    float magnitude = sqrt(pow(x_component, 2) + pow(y_component, 2));
+    x_component /= magnitude;
+    y_component /= magnitude;
+    
+    // multiply the vector by the distance
+    x_component *= distance;
+    y_component *= distance;
+    
+    // add the vector to n1
+    float x = n1->x + x_component;
+    float y = n1->y + y_component;
+    
+    return Node(x, y);
+}
