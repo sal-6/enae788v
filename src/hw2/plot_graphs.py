@@ -34,7 +34,14 @@ def parse_tree(file_path):
 
 
 def parse_path(file_path):
-    pass
+    data = []
+    with open(file_path, 'r') as f:
+        for line in f:
+            line_info = line.split(",")
+            p = (float(line_info[0]), float(line_info[1]))
+            data.append([p])
+            
+    return data
 
 
 def main():
@@ -63,20 +70,32 @@ def main():
     plt.plot(start_point[0], start_point[1], 'go')
     
     # add label
-    plt.text(start_point[0], start_point[1], "Start")
+    plt.text(start_point[0] - 5, start_point[1] + 2, "Start")
     
     # plot goal region
     goal_center = (problem_info["goal_x"], problem_info["goal_y"])
     goal_radius = problem_info["goal_radius"]
     goal_circle = plt.Circle(goal_center, goal_radius, color='r', fill=False)
     ax.add_patch(goal_circle)
-    plt.text(goal_center[0], goal_center[1], "Goal")
+    plt.text(goal_center[0] - 5, goal_center[1], "Goal")
     
     # plot the tree
     tree_path = os.path.join(OUTPUT_FOLDER_PATH, f"tree_{problem}.txt")
     tree = parse_tree(tree_path)
     for edge in tree:
         plt.plot([edge[0][0], edge[1][0]], [edge[0][1], edge[1][1]], 'b')
+        
+    # plot the path
+    path_path = os.path.join(OUTPUT_FOLDER_PATH, f"path_{problem}.txt")
+    path = parse_path(path_path)
+    for point in path:
+        plt.plot(point[0][0], point[0][1], 'rx')
+        
+    i = 0
+    while i < len(path) - 1:
+        plt.plot([path[i][0][0], path[i+1][0][0]], [path[i][0][1], path[i+1][0][1]], 'r')
+        i += 1
+    
     
     # set aspect ratio to 1
     ax.set_aspect('equal')
