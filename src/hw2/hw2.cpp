@@ -64,6 +64,11 @@ int main(int argc, char** argv) {
                 Node* new_node = new Node(rand_node.x, rand_node.y);
                 new_node->parent = closest_node;
                 T.add_node(new_node);
+                
+                if (goal_region.is_point_in_collision(new_node)) {
+                    std::cout << "found goal!" << std::endl;
+                    break;
+                }
             }
         }
         else {
@@ -72,12 +77,12 @@ int main(int argc, char** argv) {
                 Node* new_ptr = new Node(new_node.x, new_node.y);
                 new_ptr->parent = closest_node;
                 T.add_node(new_ptr);
+                
+                if (goal_region.is_point_in_collision(new_ptr)) {
+                    std::cout << "found goal!" << std::endl;
+                    break;
+                }
             }
-        }
-        
-        if (goal_region.is_point_in_collision(&rand_node)) {
-            std::cout << "found goal!" << std::endl;
-            break;
         }
         
         num_iterations++;
