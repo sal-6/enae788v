@@ -49,6 +49,7 @@ int main(int argc, char** argv) {
     Tree T = Tree();
     T.add_node(&start);
     
+    
     int num_iterations = 0;
     while (num_iterations < 1000) {
         std::cout << "iteration: " << num_iterations << std::endl;
@@ -60,15 +61,17 @@ int main(int argc, char** argv) {
         
         if (distance < epsilon) {
             if (!O.is_segment_in_collision(closest_node, &rand_node)) {
-                rand_node.parent = closest_node;
-                T.add_node(&rand_node);
+                Node* new_node = new Node(rand_node.x, rand_node.y);
+                new_node->parent = closest_node;
+                T.add_node(new_node);
             }
         }
         else {
             Node new_node = get_node_in_direction(closest_node, &rand_node, epsilon);
             if (!O.is_segment_in_collision(closest_node, &new_node)) {
-                new_node.parent = closest_node;
-                T.add_node(&new_node);
+                Node* new_ptr = new Node(new_node.x, new_node.y);
+                new_ptr->parent = closest_node;
+                T.add_node(new_ptr);
             }
         }
         
@@ -80,8 +83,9 @@ int main(int argc, char** argv) {
         num_iterations++;
     }
     
-    T.log_info();
     
+    T.log_info();
+    T.export_tree("./output/hw2/tree_1.txt");
     
     return 0;
 }
