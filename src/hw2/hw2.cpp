@@ -77,7 +77,7 @@ int main(int argc, char** argv) {
     
     
     int num_iterations = 0;
-    while (num_iterations < 1000) {
+    while (num_iterations < 10000) {
         std::cout << "iteration: " << num_iterations << std::endl;
         
         Node rand_node = random_node();
@@ -115,7 +115,7 @@ int main(int argc, char** argv) {
     }
     
     
-    T.log_info();
+    //T.log_info();
     T.export_tree("./output/hw2/tree_" + std::string(argv[1]) + ".txt");
     
     return 0;
