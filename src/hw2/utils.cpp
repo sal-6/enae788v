@@ -59,6 +59,22 @@ bool Tree::export_tree(std::string filename) {
     return true;
 }
 
+bool Tree::export_path(std::string filename, Node* goal) {
+    FILE* pFile = fopen(filename.c_str(), "w");
+    if (pFile == NULL) {
+        return false;
+    }
+    
+    Node* current = goal;
+    while (current != NULL) {
+        fprintf(pFile, "%f, %f\n", current->x, current->y);
+        current = current->parent;
+    }
+    
+    fclose(pFile);
+    return true;
+}
+
 // implement Collidable **************************************************
 Collidable::Collidable(float x, float y, float radius) {
     this->x = x;

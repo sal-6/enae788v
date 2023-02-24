@@ -74,7 +74,7 @@ int main(int argc, char** argv) {
     
     Tree T = Tree();
     T.add_node(&start);
-    
+    Node* goal_node = NULL;
     
     int num_iterations = 0;
     while (num_iterations < 10000) {
@@ -93,6 +93,7 @@ int main(int argc, char** argv) {
                 
                 if (goal_region.is_point_in_collision(new_node)) {
                     std::cout << "found goal!" << std::endl;
+                    goal_node = new_node;
                     break;
                 }
             }
@@ -106,6 +107,7 @@ int main(int argc, char** argv) {
                 
                 if (goal_region.is_point_in_collision(new_ptr)) {
                     std::cout << "found goal!" << std::endl;
+                    goal_node = new_ptr;
                     break;
                 }
             }
@@ -117,6 +119,7 @@ int main(int argc, char** argv) {
     
     //T.log_info();
     T.export_tree("./output/hw2/tree_" + std::string(argv[1]) + ".txt");
+    T.export_path("./output/hw2/path_" + std::string(argv[1]) + ".txt", goal_node);
     
     return 0;
 }
