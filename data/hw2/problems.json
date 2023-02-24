@@ -1,0 +1,42 @@
+{
+    "1": {
+        "start_x": 0,
+        "start_y": 0,
+        "goal_x": -38,
+        "goal_y": 20,
+        "goal_radius": 10,
+        "epsilon": 10
+    },
+    "2": {
+        "start_x": 27,
+        "start_y": 30,
+        "goal_x": -48,
+        "goal_y": 20,
+        "goal_radius": 10,
+        "epsilon": 5
+    },
+    "3": {
+        "start_x": 45,
+        "start_y": -45,
+        "goal_x": -45,
+        "goal_y": 45,
+        "goal_radius": 15,
+        "epsilon": 5
+    },
+    "4": {
+        "start_x": -16,
+        "start_y": 10,
+        "goal_x": 18,
+        "goal_y": -45,
+        "goal_radius": 5,
+        "epsilon": 2
+    },
+    "5": {
+        "start_x": 39,
+        "start_y": 5,
+        "goal_x": 38,
+        "goal_y": -8,
+        "goal_radius": 3,
+        "epsilon": 1
+    }
+}
