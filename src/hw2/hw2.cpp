@@ -86,7 +86,7 @@ int main(int argc, char** argv) {
         float distance = distance_between_nodes(&rand_node, closest_node);
         
         if (distance < epsilon) {
-            if (!O.is_segment_in_collision(closest_node, &rand_node)) {
+            if (!O.is_segment_in_collision(closest_node, &rand_node, 100)) {
                 Node* new_node = new Node(rand_node.x, rand_node.y);
                 new_node->parent = closest_node;
                 T.add_node(new_node);
@@ -100,7 +100,7 @@ int main(int argc, char** argv) {
         }
         else {
             Node new_node = get_node_in_direction(closest_node, &rand_node, epsilon);
-            if (!O.is_segment_in_collision(closest_node, &new_node)) {
+            if (!O.is_segment_in_collision(closest_node, &new_node, 100)) {
                 Node* new_ptr = new Node(new_node.x, new_node.y);
                 new_ptr->parent = closest_node;
                 T.add_node(new_ptr);

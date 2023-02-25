@@ -99,6 +99,7 @@ def main():
     
     # set aspect ratio to 1
     ax.set_aspect('equal')
+    plt.savefig(OUTPUT_FOLDER_PATH + f"\\graph_{problem}.png")
     plt.show()
     
 

@@ -93,14 +93,36 @@ obstacles.txt
 
 ### Instructions
 
-TODO
+1. Copy the Makefile from `./makefiles/hw2` to the root dir.
+2. Run the `make` command to compile the code. A `rrt.exe` file should be created in the root dir.
+   1. Run `make clean` to remove unneeded files
+3. Place obstacles file named properly in `./data/hw2`
+   1. The given file is already there
+4. Place a JSON file outlining the start and end positions by problem number in `./data/hw2`
+   1. A file has been placed there for the given problems as an example
+5. From the root dir, run `./rrt.exe {#}`
+   1. Output files will be created in `./output/hw2`
+      1. `path_#.txt` will contain the path
+      2. `tree_#.txt` will contain the tree
+   
+The paths and search tree can be visualized via a plot.
+1. Navigate to `./src/hw2`
+2. Open the plot_graphs.py script and adjust the absolute paths at the top of the script
+3. Create a plot by running `py ./plot_graphs.py {#}`
+
+The HW consists of 5 given problems, if on windows, they can all be run by executing the batch file in `./runs`.
+1. Change working dir into runs
+2. Run `./hw2.bat`
 
 ### Implementation Notes
 
-TODO
+The implementation of RRT can be found in `./src/hw2/hw2.cpp`. The only external dependency used is a utility used to parse JSON data. This is implemented in `./include/hw2/json.hpp` and was obtained from the following source: https://github.com/nlohmann/json. The declarations of all he utilities used can be found in `./include/hw2/utils.h`. This header file gives a pretty good idea of how the RRT algorithm was implemented. The implementation of all the declarations can be found in `./src/hw2/utils.cpp`. The implementation of RRT can be found in the `main` function of `./src/hw2/hw2.cpp`. Some considerations were made such as, rather than looping until the goal region condition was met, I preferred to loop until some max interation count and simply break from the loop if the goal region condition is met. Additionally, I am not doing continuous line segment collision checks, rather, I am dividing the line segment into some number of points and checking each point against all the obstacles. Hypothetically, this could break down if a line is almost but not quite tangent to an obstacle, while it is not seen in any of the outputted examples (even if in the PNG it looks close, all the cases I zoomed in on did not have any collisions). That being said, I do 100 divisions currently for the small comparitively small epsilon values so this is very unlikely to occur. If more fidelity is desired the number of divisions has been left as an argument and can be adjusted as needed. Or if one really would like, they can implement a continous check for a line and circle. Furthermore, the nearest neighbor check is currently a loop through all other nodes and the minimum of the Euclidean distance is found. While this isnt effecient, for the scale of the problems given it still runs in seconds. That being said, a quadtree or kd tree can be used to make the search for the closest node more effecient. The final note is that points ON the edge of an obstacle are considered invalid in my implementation. This can be changed easily if needed in the collision check function.
+
+The outputted paths, search trees, and plots can be found in `./output/hw2`. In each plot the Black represents the obstacles, the Blue represent the tree, the Red path outlines the found path, the Green shows the start point, and the Red circle shows the end region. The plot naming format is 'graph_<#>.png' where <#> is the problem number. There are also some cases called 'detail_<#>.png' which show some zoomed in cases of where the tree might almost contact an obstalce. Here <#> has no significance. This is shown just to further show that there are no collisions as the zoomed out plots render such that some edges are very close.
 
 
 ## Randoms TODOs I Might Do at Some Point, IDK
 - [ ] Organize header files for HW1 in subfolder
 - [ ] Implement an actual data structure for hw2 closest neighbor
+- [ ] Do a continous check for collision between a circle and an arbitrary curve for HW2
 - [ ] 
