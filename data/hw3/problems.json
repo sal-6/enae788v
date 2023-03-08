@@ -1,0 +1,47 @@
+{
+    "1": {
+        "start_x": 30,
+        "start_y": -35,
+        "start_theta": 1.5707963,
+        "goal_x": 0,
+        "goal_y": 0,
+        "goal_radius": 5,
+        "epsilon": 10
+    },
+    "2": {
+        "start_x": 40,
+        "start_y": -40,
+        "start_theta": 0,
+        "goal_x": 30,
+        "goal_y": 40,
+        "goal_radius": 5,
+        "epsilon": 5
+    },
+    "3": {
+        "start_x": 30,
+        "start_y": 40,
+        "start_theta": 4.71238898,
+        "goal_x": -50,
+        "goal_y": -30,
+        "goal_radius": 5,
+        "epsilon": 5
+    },
+    "4": {
+        "start_x": -50,
+        "start_y": -30,
+        "start_theta": 1.5707963,
+        "goal_x": 30,
+        "goal_y": -35,
+        "goal_radius": 5,
+        "epsilon": 3
+    },
+    "5": {
+        "start_x": -30,
+        "start_y": -35,
+        "start_theta": -0.78539816,
+        "goal_x": -35,
+        "goal_y": 30,
+        "goal_radius": 5,
+        "epsilon": 2
+    }
+}
