@@ -1,14 +1,14 @@
 CC=g++
 CFLAGS=-I./include
 
-all: hw2.o utils.o
-	$(CC) hw2.o utils.o -o rrt
+all: hw3.o utils.o
+	$(CC) hw3.o utils.o -o rrt
 
-hw2.o: ./src/hw2/hw2.cpp
-	$(CC) -c $(CFLAGS) ./src/hw2/hw2.cpp
+hw3.o: ./src/hw3/hw3.cpp
+	$(CC) -c $(CFLAGS) ./src/hw3/hw3.cpp
 
-utils.o: ./src/hw2/utils.cpp
-	$(CC) -c $(CFLAGS) ./src/hw2/utils.cpp
+utils.o: ./src/hw3/utils.cpp
+	$(CC) -c $(CFLAGS) ./src/hw3/utils.cpp
 
 clean:
 	rm -f *.o
