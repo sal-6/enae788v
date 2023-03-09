@@ -1,4 +1,4 @@
-#include "hw2/utils.h"
+#include "hw3/utils.h"
 #include <iostream>
 #include <math.h>
 
@@ -168,6 +168,76 @@ bool Obstacles::is_segment_in_collision(Node* n1, Node* n2, int divisions) {
     return false;
 }
 
+
+// implemenmt RobotTrajectory **************************************************
+
+RobotTrajectory::RobotTrajectory(RobotState start_state) {
+    this->initial_state = start_state;
+    this->states = std::list<RobotState>();
+    this->states.push_back(start_state);
+    this->is_valid = true;
+}
+
+void RobotTrajectory::log_info() {
+    std::cout << "states: " << std::endl;
+    for (std::list<RobotState>::iterator it = this->states.begin(); it != this->states.end(); ++it) {
+        std::cout << "x: " << it->x << ", y: " << it->y << std::endl;
+    }
+}
+
+void RobotTrajectory::propogate_until_distance(float acceleration, float steering_acceleration, float distance, float time_step) {
+    
+    float distance_traveled = 0;
+    int num_steps = 0;
+    
+    while (distance_traveled < distance && num_steps < MAX_EULER_ITERATIONS) {
+        RobotState current_state = this->states.back();
+        
+        // calculate rates of change
+        float x_dot = current_state.v * cos(current_state.theta);
+        float y_dot = current_state.v * sin(current_state.theta);
+        float theta_dot = current_state.w;
+        float v_dot = acceleration;
+        float w_dot = steering_acceleration;
+        
+        // calculate new state
+        float t = current_state.t + time_step;
+        float x = current_state.x + x_dot * time_step;
+        float y = current_state.y + y_dot * time_step;
+        float theta = current_state.theta + theta_dot * time_step;
+        float v = current_state.v + v_dot * time_step;
+        float w = current_state.w + w_dot * time_step;
+        
+        // add new state to trajectory
+        this->states.push_back(RobotState {
+            t, 
+            x, 
+            y, 
+            theta, 
+            v, 
+            w
+        } );
+        
+        // update distance traveled
+        distance_traveled += sqrt(pow(x_dot * time_step, 2) + pow(y_dot * time_step, 2));
+        num_steps++;
+    }
+}
+
+void RobotTrajectory::export_trajectory(std::string filename, float acceleration, float steering_acceleration) {
+    FILE* fp = fopen(filename.c_str(), "w");
+    if (fp == NULL) {
+        std::cout << "Error opening file" << std::endl;
+        return;
+    }
+    
+    for (std::list<RobotState>::iterator it = this->states.begin(); it != this->states.end(); ++it) {
+        fprintf(fp, "%f, %f, %f, %f, %f, %f, %f, %f\n", it->t, it->x, it->y, it->theta, it->v, it->w, acceleration, steering_acceleration);
+    }
+    
+    fclose(fp);
+}
+    
 
 // function implementations **************************************************
 Node random_node() {
