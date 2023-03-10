@@ -10,70 +10,6 @@ Node::Node(float x, float y) {
     this->parent = NULL;
 }
 
-// implement Tree **************************************************
-Tree::Tree() {
-    this->nodes = std::list<Node*>();
-}
-
-void Tree::log_info() {
-    std::cout << "nodes: " << std::endl;
-    for (std::list<Node*>::iterator it = this->nodes.begin(); it != this->nodes.end(); ++it) {
-        std::cout << "x: " << (*it)->x << std::endl;
-        std::cout << "y: " << (*it)->y << std::endl;
-    }
-}
-
-Node* Tree::closest_node(Node* node) {
-    float min_dist = 1000000;
-    Node* closest_node = NULL;
-    for (std::list<Node*>::iterator it = this->nodes.begin(); it != this->nodes.end(); ++it) {
-        float dist = sqrt(pow((*it)->x - node->x, 2) + pow((*it)->y - node->y, 2));
-        if (dist < min_dist) {
-            min_dist = dist;
-            closest_node = *it;
-        }
-    }
-    return closest_node;
-}
-
-void Tree::add_node(Node* node) {
-    this->nodes.push_back(node);
-    std::cout << "added node: " << node->x << ", " << node->y << std::endl;
-}
-
-bool Tree::export_tree(std::string filename) {
-    FILE* pFile = fopen(filename.c_str(), "w");
-    if (pFile == NULL) {
-        return false;
-    }
-    
-    for (std::list<Node*>::iterator it = this->nodes.begin(); it != this->nodes.end(); ++it) {
-        if ((*it)->parent != NULL) {
-            fprintf(pFile, "%f, %f, %f, %f\n",
-            (*it)->x, (*it)->y,
-            (*it)->parent->x, (*it)->parent->y);
-        }
-    }
-    
-    fclose(pFile);
-    return true;
-}
-
-bool Tree::export_path(std::string filename, Node* goal) {
-    FILE* pFile = fopen(filename.c_str(), "w");
-    if (pFile == NULL) {
-        return false;
-    }
-    
-    Node* current = goal;
-    while (current != NULL) {
-        fprintf(pFile, "%f, %f\n", current->x, current->y);
-        current = current->parent;
-    }
-    
-    fclose(pFile);
-    return true;
-}
 
 // implement Collidable **************************************************
 Collidable::Collidable(float x, float y, float radius) {
@@ -89,11 +25,13 @@ void Collidable::log_info() {
     std::cout << "radius: " << this->radius << std::endl;
 }
 
+
 // edges are considered collisions if they intersect the circle
 bool Collidable::is_point_in_collision(Node* n) {
     float dist = sqrt(pow(this->x - n->x, 2) + pow(this->y - n->y, 2));
     return dist <= this->radius;
 }
+
 
 bool Collidable::is_segment_in_collision(Node* n1, Node* n2, int divisions) {
     float dist = sqrt(pow(this->x - n1->x, 2) + pow(this->y - n1->y, 2));
@@ -119,10 +57,45 @@ bool Collidable::is_segment_in_collision(Node* n1, Node* n2, int divisions) {
     return false;
 }
 
+
+bool Collidable::is_trajectory_in_collision(RobotTrajectory* trajectory, float distance_step) {
+    
+    // check the first point
+    if (this->is_point_in_collision(new Node(trajectory->states.front().x, trajectory->states.front().y))) {
+        return true;
+    }
+    
+    
+    float curr_delta = 0;
+    // check the middle points at every point distance_step apart starting from the second point    
+    for (auto it = trajectory->states.begin(); it != std::prev(trajectory->states.end()); ++it) {
+        // increment curr_delta by the distance between the current point and the next point
+        
+        curr_delta += sqrt(pow(it->x - std::next(it)->x, 2) + pow(it->y - std::next(it)->y, 2));
+        if (curr_delta >= distance_step) {
+            curr_delta = 0;
+
+            if (this->is_point_in_collision(new Node(it->x, it->y))) {
+                return true;
+            }
+        }
+    }
+    
+    
+    // check the last point
+    if (this->is_point_in_collision(new Node(trajectory->states.back().x, trajectory->states.back().y))) {
+        return true;
+    }
+    
+    return false;
+}
+
+
 // implement Obstacles **************************************************
 Obstacles::Obstacles() {
     this->obstacles = std::list<Collidable*>();
 }
+
 
 void Obstacles::log_info() {
     std::cout << "obstacles: " << std::endl;
@@ -150,6 +123,7 @@ void Obstacles::parse_from_obstacle_file(std::string filename) {
     
 }
 
+
 bool Obstacles::is_point_in_collision(Node* n) {
     for (std::list<Collidable*>::iterator it = this->obstacles.begin(); it != this->obstacles.end(); ++it) {
         if ((*it)->is_point_in_collision(n)) {
@@ -158,6 +132,7 @@ bool Obstacles::is_point_in_collision(Node* n) {
     }
     return false;
 }
+
 
 bool Obstacles::is_segment_in_collision(Node* n1, Node* n2, int divisions) {
     for (std::list<Collidable*>::iterator it = this->obstacles.begin(); it != this->obstacles.end(); ++it) {
@@ -169,6 +144,40 @@ bool Obstacles::is_segment_in_collision(Node* n1, Node* n2, int divisions) {
 }
 
 
+bool Obstacles::is_trajectory_in_collision(RobotTrajectory* trajectory, float distance_step) {
+    
+    // check the first point
+    if (this->is_point_in_collision(new Node(trajectory->states.front().x, trajectory->states.front().y))) {
+        return true;
+    }
+    
+    
+    float curr_delta = 0;
+    // check the middle points at every point distance_step apart starting from the second point    
+    for (auto it = trajectory->states.begin(); it != std::prev(trajectory->states.end()); ++it) {
+        // increment curr_delta by the distance between the current point and the next point
+        //std::cout << "curr_delta: " << curr_delta << std::endl;
+        curr_delta += sqrt(pow(it->x - std::next(it)->x, 2) + pow(it->y - std::next(it)->y, 2));
+        if (curr_delta >= distance_step) {
+            curr_delta = 0;
+            //std::cout << "checking point: " << it->x << ", " << it->y << std::endl;
+            if (this->is_point_in_collision(new Node(it->x, it->y))) {
+                return true;
+            }
+        }
+    }
+    
+    
+    // check the last point
+    if (this->is_point_in_collision(new Node(trajectory->states.back().x, trajectory->states.back().y))) {
+        return true;
+    }
+    
+    return false;
+}
+
+
+
 // implemenmt RobotTrajectory **************************************************
 
 RobotTrajectory::RobotTrajectory(RobotState start_state) {
@@ -176,7 +185,9 @@ RobotTrajectory::RobotTrajectory(RobotState start_state) {
     this->states = std::list<RobotState>();
     this->states.push_back(start_state);
     this->is_valid = true;
+    this->parent = NULL;
 }
+
 
 void RobotTrajectory::log_info() {
     std::cout << "states: " << std::endl;
@@ -185,7 +196,8 @@ void RobotTrajectory::log_info() {
     }
 }
 
-void RobotTrajectory::propogate_until_distance(float acceleration, float steering_acceleration, float distance, float time_step) {
+
+bool RobotTrajectory::propogate_until_distance(float distance, float time_step) {
     
     float distance_traveled = 0;
     int num_steps = 0;
@@ -197,8 +209,8 @@ void RobotTrajectory::propogate_until_distance(float acceleration, float steerin
         float x_dot = current_state.v * cos(current_state.theta);
         float y_dot = current_state.v * sin(current_state.theta);
         float theta_dot = current_state.w;
-        float v_dot = acceleration;
-        float w_dot = steering_acceleration;
+        float v_dot = current_state.a;
+        float w_dot = current_state.gamma;
         
         // calculate new state
         float t = current_state.t + time_step;
@@ -218,13 +230,28 @@ void RobotTrajectory::propogate_until_distance(float acceleration, float steerin
             w
         } );
         
+        if (v > MAX_VELOCITY || v < -MAX_VELOCITY) {
+            this->is_valid = false;
+            return false;
+        }
+        
+        if (w > MAX_STEEERING_VELOCITY || w < -MAX_STEEERING_VELOCITY) {
+            this->is_valid = false;
+            return false;
+        }
+        
         // update distance traveled
         distance_traveled += sqrt(pow(x_dot * time_step, 2) + pow(y_dot * time_step, 2));
         num_steps++;
     }
+    
+    this->final_state = this->states.back();
+    
+    return true;
 }
 
-void RobotTrajectory::export_trajectory(std::string filename, float acceleration, float steering_acceleration) {
+
+void RobotTrajectory::export_trajectory(std::string filename) {
     FILE* fp = fopen(filename.c_str(), "w");
     if (fp == NULL) {
         std::cout << "Error opening file" << std::endl;
@@ -232,12 +259,41 @@ void RobotTrajectory::export_trajectory(std::string filename, float acceleration
     }
     
     for (std::list<RobotState>::iterator it = this->states.begin(); it != this->states.end(); ++it) {
-        fprintf(fp, "%f, %f, %f, %f, %f, %f, %f, %f\n", it->t, it->x, it->y, it->theta, it->v, it->w, acceleration, steering_acceleration);
+        fprintf(fp, "%f, %f, %f, %f, %f, %f, %f, %f\n", it->t, it->x, it->y, it->theta, it->v, it->w, it->a, it->gamma);
     }
     
     fclose(fp);
 }
+
+
     
+
+// implement SearchTree ********************************************************
+
+SearchTree::SearchTree() {
+    this->trajectories = std::list<RobotTrajectory*>();
+}
+
+void SearchTree::add_trajectory(RobotTrajectory* trajectory) {
+    this->trajectories.push_back(trajectory);
+}
+
+RobotTrajectory* SearchTree::get_closest_trajectory_end(Node node) {
+    
+    // iterate throgugh all trajectories and find the one with the closed end point
+    RobotTrajectory* closest_trajectory = NULL;
+    float closest_distance = 1000000;
+    
+    for (std::list<RobotTrajectory*>::iterator it = this->trajectories.begin(); it != this->trajectories.end(); ++it) {
+        float distance = sqrt(pow(node.x - (*it)->final_state.x, 2) + pow(node.y - (*it)->final_state.y, 2));
+        if (distance < closest_distance) {
+            closest_trajectory = *it;
+            closest_distance = distance;
+        }
+    }
+    
+    return closest_trajectory;
+}
 
 // function implementations **************************************************
 Node random_node() {

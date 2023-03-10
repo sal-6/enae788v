@@ -3,11 +3,12 @@
 
 #define MAX_VELOCITY 5.0
 #define MAX_STEEERING_VELOCITY 3.141592*0.5
-#define MAX_ACCERATION 2.0
+#define MAX_ACCELERATION 2.0
 #define MAX_STEEERING_ACCELERATION 3.141592*0.5
 #define MAX_EULER_ITERATIONS 1000
 #define CONTROL_ACCERATION_FIDELITY 0.5
 #define CONTROL_STEEERING_FIDELITY 0.5
+#define MAX_RRT_ITERATIONS 10000
 
 
 class Node {
@@ -21,18 +22,32 @@ class Node {
 };
 
 
-class Tree {
-    public:
-        std::list<Node*> nodes;
-        
-        Tree();
-        void log_info();
-        Node* closest_node(Node* node);
-        void add_node(Node* node);
-        bool export_tree(std::string filename);
-        bool export_path(std::string filename, Node* goal);
+struct RobotState {
+    float t;
+    float x;
+    float y;
+    float theta;
+    float v;
+    float w;
+    float a;
+    float gamma;
 };
 
+
+class RobotTrajectory {
+    public:
+        RobotState initial_state;
+        RobotState final_state;
+        std::list<RobotState> states;
+        bool is_valid;
+        
+        RobotTrajectory* parent;
+        
+        RobotTrajectory(RobotState start);
+        void log_info();
+        bool propogate_until_distance(float distance, float time_step);
+        void export_trajectory(std::string filename);
+};
 
 class Collidable {
     public:
@@ -44,6 +59,7 @@ class Collidable {
         void log_info();
         bool is_point_in_collision(Node* n);
         bool is_segment_in_collision(Node* n1, Node* n2, int divisions = 10);
+        bool is_trajectory_in_collision(RobotTrajectory* trajectory, float distance_step);
         
 };
 
@@ -57,28 +73,18 @@ class Obstacles {
         void parse_from_obstacle_file(std::string filename);    
         bool is_point_in_collision(Node* n);
         bool is_segment_in_collision(Node* n1, Node* n2, int divisions = 10);
+        bool is_trajectory_in_collision(RobotTrajectory* trajectory, float distance_step);
 };
 
 
-struct RobotState {
-    float t;
-    float x;
-    float y;
-    float theta;
-    float v;
-    float w;
-};
-
-class RobotTrajectory {
+class SearchTree {
     public:
-        RobotState initial_state;
-        std::list<RobotState> states;
-        bool is_valid;
+        std::list<RobotTrajectory*> trajectories;
         
-        RobotTrajectory(RobotState start);
-        void log_info();
-        void propogate_until_distance(float acceleration, float steering_acceleration, float distance, float time_step);
-        void export_trajectory(std::string filename, float acceleration, float steering_acceleration);
+        SearchTree();
+        void add_trajectory(RobotTrajectory* trajectory);
+        RobotTrajectory* get_closest_trajectory_end(Node node);
+    
 };
 
 
@@ -86,3 +92,4 @@ class RobotTrajectory {
 Node random_node();
 float distance_between_nodes(Node* n1, Node* n2);
 Node get_node_in_direction(Node* n1, Node* n2, float distance);
+
