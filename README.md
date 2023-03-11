@@ -120,6 +120,62 @@ The implementation of RRT can be found in `./src/hw2/hw2.cpp`. The only external
 
 The outputted paths, search trees, and plots can be found in `./output/hw2`. In each plot the Black represents the obstacles, the Blue represent the tree, the Red path outlines the found path, the Green shows the start point, and the Red circle shows the end region. The plot naming format is 'graph_<#>.png' where <#> is the problem number. There are also some cases called 'detail_<#>.png' which show some zoomed in cases of where the tree might almost contact an obstalce. Here <#> has no significance. This is shown just to further show that there are no collisions as the zoomed out plots render such that some edges are very close.
 
+## Homework 3
+
+The goal of this homework was to implement a version of the RRT algorithm which accounts for the volume and dynamics of a half car like robot. As inputs, the implemented code will require an obstacles file and robot definition file, both structured as seen below:
+
+obstacles.txt
+
+```
+{NUM OBSTACLES}
+{x}, {y}, {radius}
+{x}, {y}, {radius}
+{x}, {y}, {radius}
+```
+
+H3_robot.txt
+```
+{x}, {y}
+{x}, {y}
+{x}, {y}
+```
+
+
+### Instructions
+
+1. Copy the Makefile from `./makefiles/hw3` to the root dir.
+2. Run the `make` command to compile the code. A `rrt.exe` file should be created in the root dir.
+   1. Run `make clean` to remove unneeded files
+3. Place obstacles file named properly in `./data/hw3`
+   1. The given file is already there
+4. Place a JSON file outlining the start and end positions by problem number in `./data/hw3`
+   1. A file has been placed there for the given problems as an example
+5. From the root dir, run `./rrt.exe {#}`
+   1. Output files will be created in `./output/hw3`
+      1. `path_#.txt` will contain the path
+      2. `tree_#.txt` will contain the tree
+   
+The paths and search tree can be visualized via a plot.
+1. Navigate to `./src/hw3`
+2. Open the plot_graphs.py script and adjust the absolute paths at the top of the script
+3. Create a plot by running `py ./plot_graphs.py {#} {tol}` where `tol` is the time tolerance for the tree. `tol` will allow for jumps in the tree output that can be accounted for by the time parameter of each trajectory. Should be slightly larger than the timestep used for the Euler propogation. 
+
+The HW consists of 5 given problems, if on windows, they can all be run by executing the batch file in `./runs`.
+1. Change working dir into runs
+2. Run `./hw3.bat`
+
+### Implementation Notes
+
+The implementation of RRT can be found in `./src/hw2/hw3.cpp`. The only external dependency used is a utility used to parse JSON data. This is implemented in `./include/hw3/json.hpp` and was obtained from the following source: https://github.com/nlohmann/json. The declarations of all he utilities used can be found in `./include/hw3/utils.h`. This header file gives a pretty good idea of how the RRT algorithm was implemented. The implementation of all the declarations can be found in `./src/hw3/utils.cpp`. The implementation of RRT can be found in the `main` function of `./src/hw3/hw3.cpp`. Some considerations were made such as, rather than looping until the goal region condition was met, I preferred to loop until some max interation count and simply break from the loop if the goal region condition is met.
+
+
+The algorithm works as follows. We start the tree with the initial start point. A random point (x, y) in the workspace is generated. Given that the only control parameters are acceleration and steering acceleration for any given edge, and that those parameters are bounded, every combination of the two parameters is generated from `-MAX_ACCELERATION` to `MAX_ACCELERATION` and from `-MAX_STEEERING_ACCELERATION` to `MAX_STEEERING_ACCELERATION` with a step of `CONTROL_ACCERATION_FIDELITY` and `CONTROL_STEEERING_FIDELITY`, respectively. A `RobotTrajectory` is created for each of the possible combination of acceleration and steering acceleration. The initial parameters of the trajectory (i.e. t, x, y, v, w, ...) are set as that of the the `RobotTrajectory` in the current `SearchTree` with the closest end point Euclidean distance to the randomly generated point. Each of these `RobotTrajectory` objects is propogated using an Euler approximation with a given time step until the length of the curve is about equal to epsilon. The details of this are in `RobotTrajectory::propogate_until_distance`. The "best trajectory" is determined as the `RobotTrajectory` whose end point is closest to the randomly genereated point. This `RobotTrajectory` is added to the tree. This process is then repeated until the max allowable iterations are reached or a trajectory end point falls in the goal region. Additionally, the volume of the robot is accounted for by creating a `Robot` which contains the point cloud representing the robot.
+
+That being said, a quadtree or kd tree can be used to make the search for the closest node more effecient. The final note is that points ON the edge of an obstacle are considered invalid in my implementation. This can be changed easily if needed in the collision check function.
+
+The outputted paths, search trees, and plots can be found in `./output/hw2`. In each plot the Black represents the obstacles, the Blue represent the tree, the Red path outlines the found path, the Green shows the start point, and the Red circle shows the end region. The plot naming format is 'graph_<#>.png' where <#> is the problem number. There are also some cases called 'detail_<#>.png' which show some zoomed in cases of where the tree might almost contact an obstalce. Here <#> has no significance. This is shown just to further show that there are no collisions as the zoomed out plots render such that some edges are very close.
+
+
 
 ## Randoms TODOs I Might Do at Some Point, IDK
 - [ ] Organize header files for HW1 in subfolder
