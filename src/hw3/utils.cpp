@@ -192,7 +192,7 @@ RobotTrajectory::RobotTrajectory(RobotState start_state) {
 void RobotTrajectory::log_info() {
     std::cout << "states: " << std::endl;
     for (std::list<RobotState>::iterator it = this->states.begin(); it != this->states.end(); ++it) {
-        std::cout << "x: " << it->x << ", y: " << it->y << std::endl;
+        std::cout << "t: " << it->t << ", x: " << it->x << ", y: " << it->y << std::endl;
     }
 }
 
@@ -274,9 +274,11 @@ SearchTree::SearchTree() {
     this->trajectories = std::list<RobotTrajectory*>();
 }
 
+
 void SearchTree::add_trajectory(RobotTrajectory* trajectory) {
     this->trajectories.push_back(trajectory);
 }
+
 
 RobotTrajectory* SearchTree::get_closest_trajectory_end(Node node) {
     
@@ -294,6 +296,29 @@ RobotTrajectory* SearchTree::get_closest_trajectory_end(Node node) {
     
     return closest_trajectory;
 }
+
+
+bool SearchTree::export_tree(std::string filename) {
+    FILE* fp = fopen(filename.c_str(), "w");
+    if (fp == NULL) {
+        return false;
+    }
+
+    // log each trajectory
+    for (std::list<RobotTrajectory*>::iterator it = this->trajectories.begin(); it != this->trajectories.end(); ++it) {
+
+        std::cout << (*it)->states.size() << std::endl;
+        for (std::list<RobotState>::iterator it2 = (*it)->states.begin(); it2 != (*it)->states.end(); ++it2) {
+            std::cout << "t: " << it2->t << ", x: " << it2->x << ", y: " << it2->y << std::endl;
+        }
+    }
+    
+    std::cout << "Exported " << this->trajectories.size() << " trajectories" << std::endl;
+    
+    fclose(fp);
+    return true;
+}
+
 
 // function implementations **************************************************
 Node random_node() {
