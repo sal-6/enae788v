@@ -343,6 +343,16 @@ bool RobotTrajectory::propogate_until_distance(float distance, float time_step) 
             return false;
         }
         
+        if (x > MAX_X || x < -MAX_X) {
+            this->is_valid = false;
+            return false;
+        }
+        
+        if (y > MAX_Y || y < -MAX_Y) {
+            this->is_valid = false;
+            return false;
+        }
+        
         // update distance traveled
         distance_traveled += sqrt(pow(x_dot * time_step, 2) + pow(y_dot * time_step, 2));
         num_steps++;

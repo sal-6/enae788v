@@ -1,6 +1,11 @@
 #include <list>
 #include <string>
 
+#define MAX_X 50.0
+#define MAX_Y 50.0
+#define MIN_X -50.0
+#define MIN_Y -50.0
+
 #define MAX_VELOCITY 5.0
 #define MAX_STEEERING_VELOCITY 3.141592*0.5
 #define MAX_ACCELERATION 2.0
