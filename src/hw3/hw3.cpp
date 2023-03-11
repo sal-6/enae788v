@@ -94,7 +94,6 @@ void rrt_with_dynamics_and_volume(std::string problem) {
     P.goal_radius = problem_data[std::string(problem)]["goal_radius"];
     P.epsilon = problem_data[std::string(problem)]["epsilon"];
     
-    //srand(time(NULL)); // seed for random number generator
        
     Collidable goal_region = Collidable(P.goal_x, P.goal_y, P.goal_radius);
     float epsilon = P.epsilon;
@@ -135,7 +134,6 @@ void rrt_with_dynamics_and_volume(std::string problem) {
         //std::cout << "Random Node: " << rand_node.x << ", " << rand_node.y << std::endl;
         RobotTrajectory* nearest_traj = tree.get_closest_trajectory_end(rand_node);
         
-        //std::cout << "Nearest Trajectory: " << nearest_traj->final_state.x << ", " << nearest_traj->final_state.y << std::endl;
         
         std::list<RobotState> test_states;
         for (float a : accelerations) {
@@ -191,7 +189,6 @@ void rrt_with_dynamics_and_volume(std::string problem) {
                 std::cout << "Goal Reached!" << std::endl;
                 break;
             }
-            //best_trajectory->log_info();
         }
         
         

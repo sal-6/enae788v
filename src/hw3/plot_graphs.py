@@ -2,6 +2,7 @@ from matplotlib import pyplot as plt
 import os
 import sys
 import json
+import numpy as np
 
 DATA_FOLDER_PATH = "G:\\My Drive\\UMD\\Spring 2023\\ENAE788V\\Code\\enae788v\\data\\hw3"
 OUTPUT_FOLDER_PATH = "G:\\My Drive\\UMD\\Spring 2023\\ENAE788V\\Code\\enae788v\\output\\hw3"
@@ -50,15 +51,37 @@ def parse_path(file_path):
     return data
 
 
+def parse_robot(file_path):
+    data = []
+    with open(file_path, 'r') as f:
+        for line in f:
+            line_info = line.split(",")
+            p = (float(line_info[0]), float(line_info[1]))
+            data.append(p)
+            
+    return data
+
+
+def compute_robot_points(robot, x, y, theta):
+    robot_points = []
+    for p in robot:
+        x_new = x + p[0] * np.cos(theta) - p[1] * np.sin(theta)
+        y_new = y + p[0] * np.sin(theta) + p[1] * np.cos(theta)
+        robot_points.append((x_new, y_new))
+        
+    return robot_points
+
+
 def main():
     
     problem = sys.argv[1]
     time_step_tolerance = float(sys.argv[2])
     problem_info = json.load(open(os.path.join(DATA_FOLDER_PATH, "problems.json")))[problem]
     obstacle_path = os.path.join(DATA_FOLDER_PATH, "obstacles.txt")
+    robot_path = os.path.join(DATA_FOLDER_PATH, "H3_robot.txt")
         
     obstacles = parse_obstacles(obstacle_path)
-    
+    robot = parse_robot(robot_path)
     
     fig = plt.figure()
     ax = plt.axes()
@@ -108,6 +131,16 @@ def main():
         i += 1 """
     
     
+    # scatter robot every 500 time steps
+    i = 0
+    while i < len(tree):
+        robot_points = compute_robot_points(robot, tree[i]["x"], tree[i]["y"], tree[i]["theta"])
+        x_s = [p[0] for p in robot_points]
+        y_s = [p[1] for p in robot_points]
+        plt.plot(x_s, y_s, marker=".", markersize=.5, c='pink')
+        # plot velocity vector
+        plt.quiver(tree[i]["x"], tree[i]["y"], tree[i]["v"] * np.cos(tree[i]["theta"]), tree[i]["v"] * np.sin(tree[i]["theta"]), color='red', scale=5, headwidth=2, headlength=1.5, linewidths=[.05])
+        i += 500
     
     
     # set aspect ratio to 1

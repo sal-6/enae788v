@@ -291,8 +291,6 @@ RobotTrajectory* SearchTree::get_closest_trajectory_end(Node node) {
     
     for (std::list<RobotTrajectory*>::iterator it = this->trajectories.begin(); it != this->trajectories.end(); ++it) {
         float distance = sqrt(pow(node.x - (*it)->states.back().x, 2) + pow(node.y - (*it)->states.back().y, 2));
-        //std::cout << (*it)->states.back().x << ", y: " << (*it)->states.back().y << " = " << distance << std::endl;
-        //std::cout << "distance to -> x:" << (*it)->final_state.x << ", y: " << (*it)->final_state.y << " = " << distance << std::endl;
         if (distance < closest_distance) {
             //std::cout << "new closest" << std::endl;
             closest_trajectory = *it;
