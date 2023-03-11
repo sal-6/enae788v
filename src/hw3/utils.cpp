@@ -32,6 +32,11 @@ bool Collidable::is_point_in_collision(Node* n) {
     return dist <= this->radius;
 }
 
+bool Collidable::is_point_in_collision(float x, float y) {
+    float dist = sqrt(pow(this->x - x, 2) + pow(this->y - y, 2));
+    return dist <= this->radius;
+}
+
 
 bool Collidable::is_segment_in_collision(Node* n1, Node* n2, int divisions) {
     float dist = sqrt(pow(this->x - n1->x, 2) + pow(this->y - n1->y, 2));
@@ -245,7 +250,6 @@ bool RobotTrajectory::propogate_until_distance(float distance, float time_step) 
         num_steps++;
     }
     
-    this->final_state = this->states.back();
     
     return true;
 }
@@ -287,12 +291,17 @@ RobotTrajectory* SearchTree::get_closest_trajectory_end(Node node) {
     float closest_distance = 1000000;
     
     for (std::list<RobotTrajectory*>::iterator it = this->trajectories.begin(); it != this->trajectories.end(); ++it) {
-        float distance = sqrt(pow(node.x - (*it)->final_state.x, 2) + pow(node.y - (*it)->final_state.y, 2));
+        float distance = sqrt(pow(node.x - (*it)->states.back().x, 2) + pow(node.y - (*it)->states.back().y, 2));
+        //std::cout << (*it)->states.back().x << ", y: " << (*it)->states.back().y << " = " << distance << std::endl;
+        //std::cout << "distance to -> x:" << (*it)->final_state.x << ", y: " << (*it)->final_state.y << " = " << distance << std::endl;
         if (distance < closest_distance) {
+            //std::cout << "new closest" << std::endl;
             closest_trajectory = *it;
             closest_distance = distance;
         }
     }
+    
+    //std::cout << std::endl;
     
     return closest_trajectory;
 }
@@ -307,13 +316,12 @@ bool SearchTree::export_tree(std::string filename) {
     // log each trajectory
     for (std::list<RobotTrajectory*>::iterator it = this->trajectories.begin(); it != this->trajectories.end(); ++it) {
 
-        std::cout << (*it)->states.size() << std::endl;
         for (std::list<RobotState>::iterator it2 = (*it)->states.begin(); it2 != (*it)->states.end(); ++it2) {
-            std::cout << "t: " << it2->t << ", x: " << it2->x << ", y: " << it2->y << std::endl;
+            fprintf(fp, "%f, %f, %f, %f, %f, %f, %f, %f\n", it2->t, it2->x, it2->y, it2->theta, it2->v, it2->w, it2->a, it2->gamma);
         }
+        
     }
     
-    std::cout << "Exported " << this->trajectories.size() << " trajectories" << std::endl;
     
     fclose(fp);
     return true;

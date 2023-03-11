@@ -3,8 +3,8 @@ import os
 import sys
 import json
 
-DATA_FOLDER_PATH = "G:\\My Drive\\UMD\\Spring 2023\\ENAE788V\\Code\\enae788v\\data\\hw2"
-OUTPUT_FOLDER_PATH = "G:\\My Drive\\UMD\\Spring 2023\\ENAE788V\\Code\\enae788v\\output\\hw2"
+DATA_FOLDER_PATH = "G:\\My Drive\\UMD\\Spring 2023\\ENAE788V\\Code\\enae788v\\data\\hw3"
+OUTPUT_FOLDER_PATH = "G:\\My Drive\\UMD\\Spring 2023\\ENAE788V\\Code\\enae788v\\output\\hw3"
 
 def parse_obstacles(file_path):
     obstacles = []
@@ -25,9 +25,8 @@ def parse_tree(file_path):
     with open(file_path, 'r') as f:
         for line in f:
             line_info = line.split(",")
-            p1 = (float(line_info[0]), float(line_info[1]))
-            p2 = (float(line_info[2]), float(line_info[3]))
-            data.append([p1, p2])
+            p1 = [float(line_info[0]), float(line_info[1]), float(line_info[2])]
+            data.append([p1])
             
     return data
             
@@ -47,6 +46,7 @@ def parse_path(file_path):
 def main():
     
     problem = sys.argv[1]
+    time_step_tolerance = float(sys.argv[2])
     problem_info = json.load(open(os.path.join(DATA_FOLDER_PATH, "problems.json")))[problem]
     obstacle_path = os.path.join(DATA_FOLDER_PATH, "obstacles.txt")
         
@@ -80,13 +80,17 @@ def main():
     plt.text(goal_center[0] - 5, goal_center[1], "Goal")
     
     # plot the tree
-    tree_path = os.path.join(OUTPUT_FOLDER_PATH, f"tree_{problem}.txt")
+    tree_path = os.path.join(OUTPUT_FOLDER_PATH, f"tree_{problem}.csv")
     tree = parse_tree(tree_path)
-    for edge in tree:
-        plt.plot([edge[0][0], edge[1][0]], [edge[0][1], edge[1][1]], 'b')
-        
+    for i in range(len(tree) - 1):
+        x_s = [tree[i][0][1], tree[i+1][0][1]]
+        y_s = [tree[i][0][2], tree[i+1][0][2]]
+        time_diff = tree[i+1][0][0] - tree[i][0][0]
+        if abs(time_diff) < time_step_tolerance:
+            plt.plot(x_s, y_s, 'b')
+            
     # plot the path
-    path_path = os.path.join(OUTPUT_FOLDER_PATH, f"path_{problem}.txt")
+    """ path_path = os.path.join(OUTPUT_FOLDER_PATH, f"path_{problem}.txt")
     path = parse_path(path_path)
     for point in path:
         plt.plot(point[0][0], point[0][1], 'rx')
@@ -94,12 +98,14 @@ def main():
     i = 0
     while i < len(path) - 1:
         plt.plot([path[i][0][0], path[i+1][0][0]], [path[i][0][1], path[i+1][0][1]], 'r')
-        i += 1
+        i += 1 """
+    
+    
     
     
     # set aspect ratio to 1
     ax.set_aspect('equal')
-    plt.savefig(OUTPUT_FOLDER_PATH + f"\\graph_{problem}.png")
+    #plt.savefig(OUTPUT_FOLDER_PATH + f"\\graph_{problem}.png")
     plt.show()
     
 

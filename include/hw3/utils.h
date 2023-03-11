@@ -37,7 +37,6 @@ struct RobotState {
 class RobotTrajectory {
     public:
         RobotState initial_state;
-        RobotState final_state;
         std::list<RobotState> states;
         bool is_valid;
         
@@ -58,6 +57,7 @@ class Collidable {
         Collidable(float x, float y, float radius);
         void log_info();
         bool is_point_in_collision(Node* n);
+        bool is_point_in_collision(float x, float y);
         bool is_segment_in_collision(Node* n1, Node* n2, int divisions = 10);
         bool is_trajectory_in_collision(RobotTrajectory* trajectory, float distance_step);
         

@@ -1,6 +1,7 @@
 #include "hw3/utils.h"
 #include <iostream>
 #include <fstream>
+#include <time.h>
 #include "hw3/json.hpp"
 
 
@@ -93,7 +94,7 @@ void rrt_with_dynamics_and_volume(std::string problem) {
     P.goal_radius = problem_data[std::string(problem)]["goal_radius"];
     P.epsilon = problem_data[std::string(problem)]["epsilon"];
     
-    srand(time(NULL)); // seed for random number generator
+    //srand(time(NULL)); // seed for random number generator
        
     Collidable goal_region = Collidable(P.goal_x, P.goal_y, P.goal_radius);
     float epsilon = P.epsilon;
@@ -112,7 +113,7 @@ void rrt_with_dynamics_and_volume(std::string problem) {
     start.gamma = 0;
     
     RobotTrajectory start_trajectory = RobotTrajectory(start);
-    start_trajectory.final_state = start;
+    //start_trajectory.final_state = start;
     tree.add_trajectory(&start_trajectory);
     
     //start_trajectory.log_info();
@@ -128,23 +129,24 @@ void rrt_with_dynamics_and_volume(std::string problem) {
     }
     
     int iters = 0;
-    while (iters < 4) {
+    while (iters < 2000) {
         std::cout << "Iteration: " << iters << std::endl;
         Node rand_node = random_node();
+        //std::cout << "Random Node: " << rand_node.x << ", " << rand_node.y << std::endl;
         RobotTrajectory* nearest_traj = tree.get_closest_trajectory_end(rand_node);
         
-        std::cout << "Nearest Trajectory: " << nearest_traj->final_state.x << ", " << nearest_traj->final_state.y << std::endl;
+        //std::cout << "Nearest Trajectory: " << nearest_traj->final_state.x << ", " << nearest_traj->final_state.y << std::endl;
         
         std::list<RobotState> test_states;
         for (float a : accelerations) {
             for (float w : angular_velocities) {
                 RobotState s = RobotState();
-                s.t = nearest_traj->final_state.t;
-                s.x = 0;
-                s.y = 0;
-                s.theta = 0;
-                s.v = 0;
-                s.w = 0;
+                s.t = nearest_traj->states.back().t;
+                s.x = nearest_traj->states.back().x;
+                s.y = nearest_traj->states.back().y;
+                s.theta = nearest_traj->states.back().theta;
+                s.v = nearest_traj->states.back().v;
+                s.w = nearest_traj->states.back().w;
                 s.a = a;
                 s.gamma = w;
                 test_states.push_back(s);
@@ -164,13 +166,6 @@ void rrt_with_dynamics_and_volume(std::string problem) {
         float best_distance = 1000000;
         
         for (RobotTrajectory* each_t : test_trajectories) {
-            each_t->final_state.x += nearest_traj->final_state.x;
-            each_t->final_state.y += nearest_traj->final_state.y;
-            each_t->final_state.theta += nearest_traj->final_state.theta;
-            each_t->final_state.v += nearest_traj->final_state.v;
-            each_t->final_state.w += nearest_traj->final_state.w;
-            each_t->final_state.a += nearest_traj->final_state.a;
-            each_t->final_state.gamma += nearest_traj->final_state.gamma;
             
             if (O.is_trajectory_in_collision(each_t, 0.5)) {
                 continue;
@@ -180,7 +175,7 @@ void rrt_with_dynamics_and_volume(std::string problem) {
                 continue;
             }
             
-            float distance = sqrt(pow(each_t->final_state.x - rand_node.x, 2) + pow(each_t->final_state.y - rand_node.y, 2));
+            float distance = sqrt(pow(each_t->states.back().x - rand_node.x, 2) + pow(each_t->states.back().y - rand_node.y, 2));
             if (distance < best_distance) {
                 best_distance = distance;
                 best_trajectory = each_t;
@@ -191,23 +186,33 @@ void rrt_with_dynamics_and_volume(std::string problem) {
             
             best_trajectory->parent = nearest_traj;
             tree.add_trajectory(best_trajectory);
+            
+            if (goal_region.is_point_in_collision(best_trajectory->states.back().x, best_trajectory->states.back().y)) {
+                std::cout << "Goal Reached!" << std::endl;
+                break;
+            }
             //best_trajectory->log_info();
         }
+        
+        
         
         iters++;
     }
     
-    // run the log info on all the trajectories in the tree
-    for (RobotTrajectory* T : tree.trajectories) {
-        T->log_info();
-    }
+    // compare final states to last entry in trajectory
+    /* for (RobotTrajectory* each_t : tree.trajectories) {
+        std::cout << each_t->states.back().x << ", " << each_t->states.back().y << std::endl;
+        std::cout << each_t->states.back().x << ", " << each_t->states.back().y << std::endl;
+        std::cout << "----------------" << std::endl;
+    } */
     
-    //tree.export_tree("./output/hw3/tree.csv");
+    tree.export_tree("./output/hw3/tree_" + problem + ".csv");
     
 };
 
 
 int main(int argc, char** argv) {
+    srand (time(NULL));
     rrt_with_dynamics_and_volume(argv[1]);
     
     return 0;
