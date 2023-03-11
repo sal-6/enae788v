@@ -8,7 +8,7 @@
 #define MAX_EULER_ITERATIONS 1000
 #define CONTROL_ACCERATION_FIDELITY 0.5
 #define CONTROL_STEEERING_FIDELITY 0.5
-#define MAX_RRT_ITERATIONS 10000
+#define MAX_RRT_ITERATIONS 1000
 
 
 class Node {
@@ -31,6 +31,15 @@ struct RobotState {
     float w;
     float a;
     float gamma;
+};
+
+
+class Robot {
+    public:
+        std::list<Node*> points;
+        
+        Robot();
+        void parse_from_robot_file(std::string filename);
 };
 
 
@@ -61,7 +70,7 @@ class Collidable {
         bool is_point_in_collision(float x, float y);
         bool is_segment_in_collision(Node* n1, Node* n2, int divisions = 10);
         bool is_trajectory_in_collision(RobotTrajectory* trajectory, float distance_step);
-        
+        bool is_robot_in_collision(Robot* robot, float x, float y, float theta);
 };
 
 
@@ -75,6 +84,8 @@ class Obstacles {
         bool is_point_in_collision(Node* n);
         bool is_segment_in_collision(Node* n1, Node* n2, int divisions = 10);
         bool is_trajectory_in_collision(RobotTrajectory* trajectory, float distance_step);
+        bool is_trajectory_in_collision(RobotTrajectory* trajectory, Robot* robot, float distance_step);
+        bool is_robot_in_collision(Robot* robot, float x, float y, float theta);
 };
 
 

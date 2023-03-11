@@ -95,6 +95,26 @@ bool Collidable::is_trajectory_in_collision(RobotTrajectory* trajectory, float d
     return false;
 }
 
+bool Collidable::is_robot_in_collision(Robot* robot, float x, float y, float theta) {
+    
+    // transform the robot's points to the new location
+    std::list<Node*> transformed_points = std::list<Node*>();
+    for (std::list<Node*>::iterator it = robot->points.begin(); it != robot->points.end(); ++it) {
+        float x = (*it)->x * cos(theta) - (*it)->y * sin(theta) + x;
+        float y = (*it)->x * sin(theta) + (*it)->y * cos(theta) + y;
+        transformed_points.push_back(new Node(x, y));
+    }
+    
+    // check if any of the robot's points are in collision
+    for (std::list<Node*>::iterator it = transformed_points.begin(); it != transformed_points.end(); ++it) {
+        if (this->is_point_in_collision(*it)) {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
 
 // implement Obstacles **************************************************
 Obstacles::Obstacles() {
@@ -126,6 +146,7 @@ void Obstacles::parse_from_obstacle_file(std::string filename) {
         this->obstacles.push_back(new Collidable(x, y, radius));
     }
     
+    fclose(fp);   
 }
 
 
@@ -179,6 +200,84 @@ bool Obstacles::is_trajectory_in_collision(RobotTrajectory* trajectory, float di
     }
     
     return false;
+}
+
+
+bool Obstacles::is_trajectory_in_collision(RobotTrajectory* trajectory, Robot* robot, float distance_step) {
+    
+    // check the first point
+    if (this->is_robot_in_collision(robot, trajectory->states.front().x, trajectory->states.front().y, trajectory->states.front().theta)) {
+        return true;
+    }
+    
+    
+    float curr_delta = 0;
+    // check the middle points at every point distance_step apart starting from the second point    
+    for (auto it = trajectory->states.begin(); it != std::prev(trajectory->states.end()); ++it) {
+        // increment curr_delta by the distance between the current point and the next point
+        //std::cout << "curr_delta: " << curr_delta << std::endl;
+        curr_delta += sqrt(pow(it->x - std::next(it)->x, 2) + pow(it->y - std::next(it)->y, 2));
+        if (curr_delta >= distance_step) {
+            curr_delta = 0;
+            //std::cout << "checking point: " << it->x << ", " << it->y << std::endl;
+            if (this->is_robot_in_collision(robot, it->x, it->y, it->theta)) {
+                return true;
+            }
+        }
+    }
+    
+    
+    // check the last point
+    if (this->is_robot_in_collision(robot, trajectory->states.back().x, trajectory->states.back().y, trajectory->states.back().theta)) {
+        return true;
+    }
+    
+    return false;
+}
+
+
+
+bool Obstacles::is_robot_in_collision(Robot* robot, float x, float y, float theta) {
+    
+    // transform the robot's points to the new location
+    std::list<Node*> transformed_points = std::list<Node*>();
+    for (std::list<Node*>::iterator it = robot->points.begin(); it != robot->points.end(); ++it) {
+        float x_new = x + (*it)->x * cos(theta) - (*it)->y * sin(theta);
+        float y_new = y + (*it)->x * sin(theta) + (*it)->y * cos(theta);
+        transformed_points.push_back(new Node(x_new, y_new));
+    }
+    
+    // check if any of the robot's points are in collision
+    for (std::list<Node*>::iterator it = transformed_points.begin(); it != transformed_points.end(); ++it) {
+        if (this->is_point_in_collision(*it)) {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+// implement Robot **************************************************
+Robot::Robot() {
+    this->points = std::list<Node*>(); // empty list
+}
+
+void Robot::parse_from_robot_file(std::string filename) {
+    FILE* fp = fopen(filename.c_str(), "r");
+    if (fp == NULL) {
+        std::cout << "Error opening file" << std::endl;
+        return;
+    }
+    
+    char line[256];
+    while (fgets(line, sizeof(line), fp)) {
+        float x, y;
+        sscanf(line, "%f, %f\n", &x, &y);
+        this->points.push_back(new Node(x, y));
+    }
+    
+    fclose(fp);
+    
 }
 
 
@@ -267,8 +366,6 @@ void RobotTrajectory::export_trajectory(std::string filename) {
     
     fclose(fp);
 }
-
-
     
 
 // implement SearchTree ********************************************************
@@ -332,9 +429,11 @@ Node random_node() {
     return Node(rand_x, rand_y);
 }
 
+
 float distance_between_nodes(Node* n1, Node* n2) {
     return sqrt(pow(n1->x - n2->x, 2) + pow(n1->y - n2->y, 2));
 }
+
 
 Node get_node_in_direction(Node* n1, Node* n2, float distance) {
     // get x and y components of the vector between n1 and n2

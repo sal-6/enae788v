@@ -101,6 +101,9 @@ void rrt_with_dynamics_and_volume(std::string problem) {
     Obstacles O = Obstacles();
     O.parse_from_obstacle_file("./data/hw3/obstacles.txt");
     
+    Robot robot = Robot();
+    robot.parse_from_robot_file("./data/hw3/H3_robot.txt");
+    
     SearchTree tree = SearchTree();
     RobotState start = RobotState();
     start.x = P.start_x;
@@ -128,7 +131,7 @@ void rrt_with_dynamics_and_volume(std::string problem) {
     }
     
     int iters = 0;
-    while (iters < 2000) {
+    while (iters < MAX_RRT_ITERATIONS) {
         std::cout << "Iteration: " << iters << std::endl;
         Node rand_node = random_node();
         //std::cout << "Random Node: " << rand_node.x << ", " << rand_node.y << std::endl;
@@ -165,11 +168,11 @@ void rrt_with_dynamics_and_volume(std::string problem) {
         
         for (RobotTrajectory* each_t : test_trajectories) {
             
-            if (O.is_trajectory_in_collision(each_t, 0.5)) {
+            if (!each_t->is_valid) {
                 continue;
             }
             
-            if (!each_t->is_valid) {
+            if (O.is_trajectory_in_collision(each_t, &robot, 0.5)) {
                 continue;
             }
             
