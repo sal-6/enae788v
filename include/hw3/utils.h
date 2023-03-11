@@ -97,6 +97,7 @@ class SearchTree {
         void add_trajectory(RobotTrajectory* trajectory);
         RobotTrajectory* get_closest_trajectory_end(Node node);
         bool export_tree(std::string filename);
+        bool export_path(std::string filename, RobotTrajectory* goal_traj);
 };
 
 

@@ -45,8 +45,15 @@ def parse_path(file_path):
     with open(file_path, 'r') as f:
         for line in f:
             line_info = line.split(",")
-            p = (float(line_info[0]), float(line_info[1]))
-            data.append([p])
+            p1 = {
+                "t" : float(line_info[0]),
+                "x" : float(line_info[1]),
+                "y" : float(line_info[2]),
+                "theta" : float(line_info[3]),
+                "v" : float(line_info[4]),
+                "w" : float(line_info[5]),
+            }
+            data.append(p1)
             
     return data
 
@@ -118,18 +125,7 @@ def main():
         time_diff = tree[i+1]["t"] - tree[i]["t"]
         if abs(time_diff) < time_step_tolerance:
             plt.plot(x_s, y_s, 'b')
-            
-    # plot the path
-    """ path_path = os.path.join(OUTPUT_FOLDER_PATH, f"path_{problem}.txt")
-    path = parse_path(path_path)
-    for point in path:
-        plt.plot(point[0][0], point[0][1], 'rx')
         
-    i = 0
-    while i < len(path) - 1:
-        plt.plot([path[i][0][0], path[i+1][0][0]], [path[i][0][1], path[i+1][0][1]], 'r')
-        i += 1 """
-    
     
     # scatter robot every 500 time steps
     i = 0
@@ -142,6 +138,14 @@ def main():
         plt.quiver(tree[i]["x"], tree[i]["y"], tree[i]["v"] * np.cos(tree[i]["theta"]), tree[i]["v"] * np.sin(tree[i]["theta"]), color='red', scale=5, headwidth=2, headlength=1.5, linewidths=[.05])
         i += 500
     
+    
+    # plot the path as a rainbow
+    path_path = os.path.join(OUTPUT_FOLDER_PATH, f"path_{problem}.csv")
+    path = parse_path(path_path)
+    for i in range(len(path) - 1):
+        x_s = [path[i]["x"], path[i+1]["x"]]
+        y_s = [path[i]["y"], path[i+1]["y"]]
+        plt.plot(x_s, y_s, 'lime')
     
     # set aspect ratio to 1
     ax.set_aspect('equal')

@@ -421,6 +421,26 @@ bool SearchTree::export_tree(std::string filename) {
     return true;
 }
 
+bool SearchTree::export_path(std::string filename, RobotTrajectory* goal_traj) {
+    FILE* fp = fopen(filename.c_str(), "w");
+    if (fp == NULL) {
+        return false;
+    }
+
+    while (goal_traj != NULL) {
+        // write reversed trajectory to file
+        for (std::list<RobotState>::reverse_iterator it = goal_traj->states.rbegin(); it != goal_traj->states.rend(); ++it) {
+            fprintf(fp, "%f, %f, %f, %f, %f, %f, %f, %f\n", it->t, it->x, it->y, it->theta, it->v, it->w, it->a, it->gamma);
+        }
+        
+        goal_traj = goal_traj->parent;
+    }
+    
+    
+    fclose(fp);
+    return true;
+}
+
 
 // function implementations **************************************************
 Node random_node() {

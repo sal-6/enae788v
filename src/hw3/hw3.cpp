@@ -130,6 +130,7 @@ void rrt_with_dynamics_and_volume(std::string problem) {
         angular_velocities.push_back(w);
     }
     
+    RobotTrajectory* goal_trajectory = NULL;
     int iters = 0;
     while (iters < MAX_RRT_ITERATIONS) {
         std::cout << "Iteration: " << iters << std::endl;
@@ -190,6 +191,7 @@ void rrt_with_dynamics_and_volume(std::string problem) {
             
             if (goal_region.is_point_in_collision(best_trajectory->states.back().x, best_trajectory->states.back().y)) {
                 std::cout << "Goal Reached!" << std::endl;
+                goal_trajectory = best_trajectory;
                 break;
             }
         }
@@ -207,6 +209,7 @@ void rrt_with_dynamics_and_volume(std::string problem) {
     } */
     
     tree.export_tree("./output/hw3/tree_" + problem + ".csv");
+    tree.export_path("./output/hw3/path_" + problem + ".csv", goal_trajectory);
     
 };
 
