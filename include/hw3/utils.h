@@ -48,6 +48,7 @@ class RobotTrajectory {
         void export_trajectory(std::string filename);
 };
 
+
 class Collidable {
     public:
         float x;

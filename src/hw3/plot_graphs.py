@@ -25,8 +25,15 @@ def parse_tree(file_path):
     with open(file_path, 'r') as f:
         for line in f:
             line_info = line.split(",")
-            p1 = [float(line_info[0]), float(line_info[1]), float(line_info[2])]
-            data.append([p1])
+            p1 = {
+                "t" : float(line_info[0]),
+                "x" : float(line_info[1]),
+                "y" : float(line_info[2]),
+                "theta" : float(line_info[3]),
+                "v" : float(line_info[4]),
+                "w" : float(line_info[5]),
+            }
+            data.append(p1)
             
     return data
             
@@ -83,9 +90,9 @@ def main():
     tree_path = os.path.join(OUTPUT_FOLDER_PATH, f"tree_{problem}.csv")
     tree = parse_tree(tree_path)
     for i in range(len(tree) - 1):
-        x_s = [tree[i][0][1], tree[i+1][0][1]]
-        y_s = [tree[i][0][2], tree[i+1][0][2]]
-        time_diff = tree[i+1][0][0] - tree[i][0][0]
+        x_s = [tree[i]["x"], tree[i+1]["x"]]
+        y_s = [tree[i]["y"], tree[i+1]["y"]]
+        time_diff = tree[i+1]["t"] - tree[i]["t"]
         if abs(time_diff) < time_step_tolerance:
             plt.plot(x_s, y_s, 'b')
             

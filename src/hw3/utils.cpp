@@ -182,7 +182,6 @@ bool Obstacles::is_trajectory_in_collision(RobotTrajectory* trajectory, float di
 }
 
 
-
 // implemenmt RobotTrajectory **************************************************
 
 RobotTrajectory::RobotTrajectory(RobotState start_state) {
